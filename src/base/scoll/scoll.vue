@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" ref="wrapper">
+  <div ref="wrapper">
     <slot></slot>
   </div>
 </template>
@@ -28,7 +28,13 @@ export default {
     data: {
       type: Array,
       default: null
+    },
+    // 判断是否开启监听歌单列表的滚动
+    listenScroll: {
+      type: Boolean,
+      default: false
     }
+    
   },
   data () {
     return {
@@ -45,6 +51,15 @@ export default {
         probeType: this.probeType,
         click: this.click
       })
+
+      // 如果父组件传过来的listenScroll时true
+      if (this.listenScroll) {
+        // 给组件绑定一个滚动时触发的事件
+        this.scroll.on('scroll', (pos) => {
+          // 传参给父组件,将滚动的信息传过去
+          this.$emit('scroll', pos)
+        })
+      }
     },
     // 封装一些better-scroll的方法
     // 启动better-scroll
@@ -59,6 +74,14 @@ export default {
     // 重新计算 better-scroll，当 DOM 结构发生变化的时候务必要调用确保滚动的效果正常
     refresh() {
       this.scroll && this.scroll.refresh()
+    },
+    // 滚动到指定的位置
+    scrollTo() {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+    },
+    // 滚动到指定的目标元素
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
     }
   },
   watch: {
