@@ -23,3 +23,22 @@ export function getSingerList() {
   // 返回一个jsonp的请求
   return jsonp(url, data, options)
 }
+
+// 请求歌手的详情
+export function getSinger(singerId) {
+  // 请求的地址
+  const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
+  // 请求的参数
+  const data = Object.assign({}, commonParams, {
+    hostUin: 0,
+    needNewCode: 0,
+    platform: 'yqq',
+    order: 'listen',
+    begin: 0,
+    num: 100,
+    songstatus: 1,
+    singermid: singerId
+  })
+  // 返回jsonp请求
+  return jsonp(url, data, options)
+}

@@ -1,9 +1,9 @@
 <template>
   <div class="singer">
-    <list-view :data='singerList'></list-view>
+    <list-view :data='singerList' @selectInfo='selectDetial'></list-view>
+    <router-view></router-view>
   </div>
 </template>
-
 <script>
 // 导入歌手列表请求函数
 import { getSingerList } from 'api/singer'
@@ -13,6 +13,8 @@ import { ERR_OK } from 'api/config'
 import Singer from 'assets/js/singerClass'
 // 导入歌手列表组件
 import listView from 'base/listview/listview'
+// 导入mutation的方法
+import { mapMutations } from 'vuex'
 
 // 设置一个热门的常量
 const HOT_TITLE = '热门'
@@ -25,6 +27,19 @@ export default {
   },
 
   methods: {
+    // 解构mapMutations
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    }),
+    // 获取到子组件传过来的信息
+    selectDetial(item) {
+      // 跳转到歌手详情页
+      this.$router.push({
+        path: `/singer/${item.id}`
+      })
+      // 触发mutations的方法,并将歌手信息传参过去
+      this.setSinger(item)
+    },
     // 歌手请求的函数
     async _getSingerList() {
       // 发起请求

@@ -12,7 +12,15 @@ export default [
   {
     // 配置歌手页面路由
     path: '/singer',
-    component: () => import('_c/singer/singer')
+    component: () => import('_c/singer/singer'),
+    // 配置singer的子路由
+    children: [
+      {
+        // 歌手详情路由
+        path: ':id',
+        component: () => import('_c/singer-detail/singer-detail')
+      }
+    ]
   },
   {
     // 配置排行榜路由

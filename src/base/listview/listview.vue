@@ -7,10 +7,20 @@
   :probeType='probeType'
   >
     <ul>
-      <li class="list-group" v-for="group in data" :key="group.id" ref="listGroup">
+      <li
+      class="list-group"
+      v-for="group in data"
+      :key="group.id"
+      ref="listGroup"
+      >
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li class="list-group-item" v-for="(item, index) in group.items" :key="index">
+          <li
+          class="list-group-item"
+          v-for="(item, index) in group.items"
+          :key="index"
+          @click="select(item)"
+          >
             <img v-lazy="item.avater" class="avatar">
             <span class="name">{{item.name}}</span>
           </li>
@@ -23,7 +33,8 @@
         v-for="(item, index) in getListZiMu"
         :key="index"
         :class="['item', currentIndex === index ? 'current' : '']"
-        :data-index='index'>{{item}}</li>
+        :data-index='index'>{{item}}
+        </li>
       </ul>
     </div>
     <div class="list-fixed" v-show="fix_title" ref="fixed">
@@ -32,7 +43,7 @@
     <div class="loading-container" v-show="!data.length">
       <loading></loading>
     </div>
-</scroll>
+  </scroll>
 </template>
 
 <script>
@@ -40,7 +51,6 @@
 import scroll from 'base/scoll/scoll'
 // 导入获取dom属性的函数
 import { getAttr } from 'assets/js/dom'
-import { createGzip } from 'zlib';
 // 导入loading组件
 import loading from 'base/loading/loading'
 
@@ -68,7 +78,7 @@ export default {
       // 设置scroll组件的probeType
       probeType: 3,
       // 保存歌手列表滑动时，字母对应的当前索引号
-      currentIndex: 0.,
+      currentIndex: 0,
       // 差值
       diff: 0
     }
@@ -79,6 +89,10 @@ export default {
   },
 
   methods: {
+    // 发送给父组件，告诉它我被点击了，并将当前歌手的信息传输过去
+    select(item) {
+      this.$emit('selectInfo', item)
+    },
     // 手指头点击触发的事件
     onShortcut(e) {
       // 获取到字母列表响应的索引号
@@ -142,7 +156,7 @@ export default {
     data() {
       // 设置一个延时器，保证dom与数据渲染有效果
       setTimeout(() => {
-       this._setListHeight()
+        this._setListHeight()
       }, 20)
     },
     // 监听scrollY的变化
@@ -150,7 +164,7 @@ export default {
       // 设置一个保存了listHeight的常量
       const list = this.listHeight
       // 循环遍历list
-      for(let i = 0; i < list.length - 1; i++) {
+      for (let i = 0; i < list.length - 1; i++) {
         // 获取到当前的高度
         let height1 = list[i]
         // 获取到下一个的高度
