@@ -6,7 +6,7 @@
     <h1 class="title" v-html="singer.name"></h1>
     <div class="bg-image" :style='bgStyle' ref="bgImg">
       <div class="play-wrapper" ref='playWrapper' v-show="songArr.length">
-        <div class="play">
+        <div class="play" @click="randomPlay">
           <i class="icon-play">随机播放全部</i>
         </div>
       </div>
@@ -21,7 +21,7 @@
     @scroll='scroll'
     >
       <div class="song-list-wrapper">
-        <song-list :songArr='songArr'></song-list>
+        <song-list :songArr='songArr' @playSonger='playSong'></song-list>
       </div>
       <div class="loading-container" v-show="!songArr.length">
         <loading></loading>
@@ -32,7 +32,7 @@
 
 <script>
 // 导入getters里面的数据
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 // 导入song-list组件
 import songList from 'base/song-list/song-list'
 // 导入better-scroll初始化组件
@@ -60,7 +60,26 @@ export default {
     },
     back() {
       this.$router.back()
-    }
+    },
+    // 接收子组件的参数
+    playSong(item, index) {
+      // 触发actions的方法
+      this.setPlayInfo({
+        list: this.songArr,
+        index
+      })
+    },
+    // 点击随机播放按钮触发的回调函数
+    randomPlay() {
+      this.randomPlayInfo({
+        list: this.songArr
+      })
+    },
+    // 获取到actions里面的方法
+    ...mapActions([
+      'setPlayInfo',
+      'randomPlayInfo'
+    ])
   },
   computed: {
     // 将getters的数据映射到这里
@@ -122,7 +141,7 @@ export default {
       }
 
       // 设置图片放大
-      this.$refs.bgImg.style.transform =  `scale(${scal})`
+      this.$refs.bgImg.style.transform = `scale(${scal})`
       // 这里可以根据条件设置层级
       this.$refs.bgImg.style.zIndex = zIndex
     }

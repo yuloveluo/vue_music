@@ -8,7 +8,7 @@
 // 导入vuex的getters组件的数据
 import { mapGetters, mapMutations } from 'vuex'
 // 导入请求歌手详情的参数
-import { getSinger } from 'api/singer.js'
+import { getSinger, getPurlUrl } from 'api/singer.js'
 // 导入请求成功的判断条件
 import { ERR_OK } from 'api/config.js'
 // 导入工厂模式创建Song实例
@@ -19,7 +19,13 @@ export default {
   data () {
     return {
       // 放置歌手的每一个歌曲实例
-      song: []
+      song: [],
+      // 歌手的songmid的数组
+      songMidArr: [],
+      // 歌手的songtype数组
+      songTypeArr: [],
+      // 音乐播放相关的信息数组
+      autoInfo: []
     }
   },
 
@@ -33,23 +39,31 @@ export default {
       const res = await getSinger(this.singer.id)
       // 请求成功
       if (res.code === ERR_OK) {
+        res.data.list.forEach((item) => {
+          let { musicData } = item
+          this.songMidArr.push(musicData.songmid)
+          this.songTypeArr.push(musicData.songtype)
+        })
+        const resUrl = await getPurlUrl(this.songMidArr, this.songTypeArr)
+        this.autoInfo = resUrl.data.req_0.data.midurlinfo
         // 初始化歌手详情数据
-        this.song = this._InitSingerInfo(res.data.list)
+        this.song = this._InitSingerInfo(res.data.list, this.autoInfo)
+        console.log(this.song)
         // 将歌手歌单数据传送到state状态管理中心
         this.getSongs(this.song)
       }
     },
     // 初始化歌手详情,让歌手详情中的每一列都变成Song的实例
-    _InitSingerInfo(list) {
+    _InitSingerInfo(list, autoInfo) {
       // 先设置一个返回数组
       let ret = []
       // 循环歌手详情数据
-      list.forEach(item => {
+      list.forEach((item, index) => {
         // 需要每一项中的额musicData对象数据
         let { musicData } = item
         // 判断是否存在albummid和songid
         if (musicData.albummid && musicData.songid) {
-          ret.push(createSong(musicData))
+          ret.push(createSong(musicData, autoInfo[index].purl))
         }
       })
       return ret

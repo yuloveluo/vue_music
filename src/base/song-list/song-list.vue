@@ -1,7 +1,12 @@
 <template>
   <div class="song-list">
     <ul>
-      <li class="item" v-for="item in songArr" :key="item.id">
+      <li
+      class="item"
+      v-for="(item, index) in songArr"
+      :key="item.id"
+      @click="playSong(item,index)"
+      >
         <div class="content">
           <h2 class="name">{{item.name}}</h2>
           <p class="desc">{{getDesc(item)}}</p>
@@ -28,6 +33,11 @@ export default {
   methods: {
     getDesc(song) {
       return `${song.singer} ~ ${song.album}`
+    },
+    // 点击播放歌曲
+    playSong(item, index) {
+      // 将点击了哪个和参数都传送到父组件去
+      this.$emit('playSonger', item, index)
     }
   },
 
